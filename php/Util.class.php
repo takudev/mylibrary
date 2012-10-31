@@ -1,5 +1,7 @@
 <?php
 
+class Util{
+
 /**
  * 前方一致
  * $haystackが$needleから始まるか否かを判定します。
@@ -7,7 +9,7 @@
  * @param string $needle
  * @return TRUE = needleで始まる / FALSE = needleで始まらない
  */
-function startsWith($haystack, $needle){
+public static function startsWith($haystack, $needle){
 	return strpos($haystack, $needle) === 0;
 }
 
@@ -18,7 +20,7 @@ function startsWith($haystack, $needle){
  * @param string $needle
  * @return boolean
  */
-function endsWith($haystack, $needle){
+public static function endsWith($haystack, $needle){
     $length = (strlen($haystack) - strlen($needle));
     // 文字列長が足りていない場合はFALSEを返します。
     if($length < 0) return false;
@@ -33,8 +35,9 @@ function endsWith($haystack, $needle){
  * @param string $needle
  * @return boolean
  */
-function matchesIn($haystack, $needle){
+public static function matchesIn($haystack, $needle){
     return strpos($haystack, $needle) !== false;
 }
 
+}
 ?>

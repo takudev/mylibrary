@@ -1,5 +1,5 @@
 <?php
-class StackTest extends PHPUnit_Framework_TestCase
+class UtilTest extends PHPUnit_Framework_TestCase
 {
     public function testPushAndPop()
     {
