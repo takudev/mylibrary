@@ -1,3 +1,5 @@
+// テストの実施
+
 php \
 -d include_path=\
 .:/usr/share/pear:/usr/share/php:\
@@ -13,3 +15,7 @@ php \
 ./phpunit3.5_suite/phpunit-story:\
 ./phpunit3.5_suite/php-invoker \
 ./phpunit3.5_suite/phpunit/phpunit.php StackTest
+
+// テストクラスの作成 ※Util.phpの場合->UtilTest.phpが作成される。
+
+phpunit.php --skeleton-test Util
