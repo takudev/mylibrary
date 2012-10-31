@@ -46,10 +46,12 @@ class UtilTest extends PHPUnit_Framework_TestCase
      */
     public function testEndsWith()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+	$haystack = "aaa@docomo.ne.jpa";
+        $needle = "docomo.ne.jp";
+
+        $ret = Util::endsWith($haystack, $needle);
+        $this->assertEquals($ret, true);
+
     }
 
     /**
