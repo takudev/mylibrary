@@ -42,15 +42,12 @@ class UtilTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testEndsWith().
+     * @dataProvider forTestEndsWith
      */
-    public function testEndsWith()
+    public function testEndsWith($haystack, $needle, $bool)
     {
-	$haystack = "aaa@docomo.ne.jpa";
-        $needle = "docomo.ne.jp";
-
         $ret = Util::endsWith($haystack, $needle);
-        $this->assertEquals($ret, true);
+        $this->assertEquals($ret, $bool);
 
     }
 
@@ -62,6 +59,15 @@ class UtilTest extends PHPUnit_Framework_TestCase
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
           'This test has not been implemented yet.'
+        );
+    }
+
+    public function forTestEndsWith()
+    {
+        return array(
+            array("docomo.ne.jp", "docomo.ne.jp", true),
+            array("aaa@docomo.ne.jp", "docomo.ne.jp", true),
+            array("aaa@docomo.ne.jpa", "docomo.ne.jp", false),
         );
     }
 }
