@@ -1,6 +1,6 @@
 <?php
 
-require_once '/home/jumonji/temp/mylibrary/php/Util.php';
+require_once dirname(__FILE__).'/../Util.php';
 
 /**
  * Test class for Util.
@@ -31,14 +31,12 @@ class UtilTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testStartsWith().
+     * @dataProvider forTestStartsWith
      */
-    public function testStartsWith()
+    public function testStartsWith($haystack, $needle, $bool)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $ret = Util::startsWith($haystack, $needle);
+        $this->assertEquals($ret, $bool);
     }
 
     /**
@@ -48,26 +46,46 @@ class UtilTest extends PHPUnit_Framework_TestCase
     {
         $ret = Util::endsWith($haystack, $needle);
         $this->assertEquals($ret, $bool);
-
     }
 
     /**
-     * @todo Implement testMatchesIn().
+     * @dataProvider forTestMatchesIn
      */
-    public function testMatchesIn()
+    public function testMatchesIn($haystack, $needle, $bool)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+        $ret = Util::matchesIn($haystack, $needle);
+        $this->assertEquals($ret, $bool);
+    }
+
+    //==========================================
+    // dataProvider
+    //==========================================
+    public function forTestStartsWith()
+    {
+        return array(
+                array("abc", "a", true),
+                array("abc", "b", false),
+                array("abc", "c", false),
         );
     }
 
     public function forTestEndsWith()
     {
         return array(
-            array("docomo.ne.jp", "docomo.ne.jp", true),
-            array("aaa@docomo.ne.jp", "docomo.ne.jp", true),
-            array("aaa@docomo.ne.jpa", "docomo.ne.jp", false),
+                array("abc", "a", false),
+                array("abc", "b", false),
+                array("abc", "c", true),
+        );
+    }
+
+    public function forTestMatchesIn()
+    {
+        return array(
+                array("abc", "a", true),
+                array("abc", "b", true),
+                array("abc", "c", true),
+                array("abc", "abc", true),
+                array("abc", "d", false),
         );
     }
 }
