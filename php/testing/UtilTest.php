@@ -64,10 +64,29 @@ class UtilTest extends PHPUnit_Framework_TestCase
     /**
      *
      */
+    public function testGetRandomCharacters(){
+
+        $character = "a";
+        $ret = Util::getRandomCharacters($character, 1);
+        $this->assertEquals($ret, "a");
+
+        $character = "a";
+        $ret = Util::getRandomCharacters($character);
+        $this->assertEquals($ret, "aaaaaaaa");
+
+        $character = "abc";
+        $ret = Util::getRandomCharacters($character, 8);
+        $this->assertRegExp("/[abc]{8}/", $ret);
+    }
+
+
+    /**
+     *
+     */
     public function testGetRandomString(){
 
         // 文字種のチェック
-        for($i=0; $i<250; $i++){
+        for($i=0; $i<100; $i++){
             $random_string = Util::getRandomString();
             $this->assertRegExp("/[a-zA-Z0-9_@]{8}/", $random_string);
         }
@@ -75,6 +94,47 @@ class UtilTest extends PHPUnit_Framework_TestCase
         // 文字数のチェック
         $random_string = Util::getRandomString(10);
         $this->assertEquals(strlen($random_string), 10, "char length not expected. random string:".$random_string);
+    }
+
+
+    public function testGetRandoomStringStrong8(){
+
+        for($i=0; $i<100; $i++){
+            $random_string = Util::getRandomStringStrong8();
+            $other_character = '!@#$%&*()-+=<>;:';
+            $pattern = '/[' . $other_character . '].*[' . $other_character . ']/';
+
+            // 記号が2文字含まれるかをチェック
+            $this->assertRegExp($pattern, $random_string);
+
+            // 文字数のチェック
+            $this->assertEquals(strlen($random_string), 8, "char length not expected. random string:".$random_string);
+        }
+
+        // 文字数のチェック
+        $random_string = Util::getRandomStringStrong8(10);
+        $this->assertEquals(strlen($random_string), 10, "char length not expected. random string:".$random_string);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testGetRandoomStringStrong8Exception1(){
+        Util::getRandomStringStrong8(0);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testGetRandoomStringStrong8Exception2(){
+        Util::getRandomStringStrong8(1);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testGetRandoomStringStrong8Exception3(){
+        Util::getRandomStringStrong8("a");
     }
 
     //==========================================
