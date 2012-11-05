@@ -30,6 +30,10 @@ class UtilTest extends PHPUnit_Framework_TestCase
     {
     }
 
+
+    //==========================================
+    // test function
+    //==========================================
     /**
      * @dataProvider forTestStartsWith
      */
@@ -55,6 +59,23 @@ class UtilTest extends PHPUnit_Framework_TestCase
     {
         $ret = Util::matchesIn($haystack, $needle);
         $this->assertEquals($ret, $bool);
+    }
+
+    /**
+     *
+     */
+    public function testGetRandomString(){
+
+        // 文字種のチェック
+        for($i=0; $i<250; $i++){
+            $random_string = Util::getRandomString();
+            $this->assertRegExp("/[a-zA-Z0-9_@]{8}/", $random_string);
+        }
+
+        // 文字数のチェック
+        $random_string = Util::getRandomString(10);
+        $this->assertEquals(strlen($random_string), 10, "char length not expected. random string:".$random_string);
+        $this->assertRegExp("/[a-zA-Z0-9]/", $random_string);
     }
 
     //==========================================
