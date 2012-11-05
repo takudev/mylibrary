@@ -75,7 +75,6 @@ class UtilTest extends PHPUnit_Framework_TestCase
         // 文字数のチェック
         $random_string = Util::getRandomString(10);
         $this->assertEquals(strlen($random_string), 10, "char length not expected. random string:".$random_string);
-        $this->assertRegExp("/[a-zA-Z0-9]/", $random_string);
     }
 
     //==========================================
