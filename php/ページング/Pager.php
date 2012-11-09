@@ -6,40 +6,41 @@
 class Pager {
 
     private $page = null;
-    private $perPage = 10;
+    private $perPage = null;
     private $itemData = array();
     private $startIndex = 0;
     private $endIndex = 0;
     private $totalPage = 0;
 
     private $pageData = array();
-    private $nextPage = null;
-    private $prevPage = null;
-
 
     /**
      * コンストラクタ
+     * ページに含めるデータを配列で指定します。
      *
-     *
-     * @param array $itemData ページに含まれるデータ
+     * @param array $itemData ページに含めるデータ
      */
-    public function __construct(array $itemData){
+    public function __construct(array $itemData, $per_page = 10){
 
         $this->itemData = $itemData;
+        $this->perPage = $per_page;
 
         $this->initialize();
+
+        $this->setCurrentPageNumber(1);
     }
 
     /**
+     * 現在のページ番号を指定。
+     * 有効範囲外のページ番号の場合は無視されます。このときユーザレベルの警告が発生します。
      *
-     * @param int $page
+     * @param int $page 現在のページ番号
      */
     public function setCurrentPageNumber($page)
     {
         // 指定したページ番号が有効範囲内なら保持
         if(0 < $page && $page <= $this->totalPage){
             $this->page = $page;
-            $this->initialize();
         }
         else{
             trigger_error("指定したページ番号[".$page."]は有効範囲外です。※ページ数：".$this->totalPage, E_USER_WARNING);
@@ -62,7 +63,7 @@ class Pager {
     /**
      * 現在のページ番号を取得
      *
-     * @return int
+     * @return int 現在のページ番号
      */
     public function getCurrentPageNumber()
     {
@@ -71,40 +72,57 @@ class Pager {
 
     /**
      * 現在ページの次のページの番号を取得
+     * 次のページがない場合は、現在のページ番号が返却されます。
      *
-     * @return int
+     * @return int 次のページ番号
      */
     public function getNextPageNumber()
     {
-        return $this->nextPage;
+        $next_page = $this->page;
+
+        if (!is_null($this->page) && $this->page < $this->totalPage) {
+            $next_page = $this->page + 1;
+        }
+
+        return $next_page;
     }
 
     /**
      * 現在ページの前のページの番号を取得
+     * 前のページがない場合は、現在のページ番号が返却されます。
      *
-     * @return int
+     * @return int 前のページ番号
      */
     public function getPrevPageNumber()
     {
-        return $this->prevPage;
+        $prev_page = $this->page;
+
+        if (!is_null($this->page) && 1 < $this->page) {
+            $prev_page = $this->page - 1;
+        }
+
+        return $prev_page;
     }
 
     /**
      * 現在のページのデータを取得
      *
-     * @return array
+     * @return array 現在のページのデータ
      */
     public function getCurrentPageData()
     {
         if(!isset($this->pageData[$this->page - 1])){
-            return array();
+            // メンバ変数pageがpageDataIndex外の値になることはありません。
+            throw new Exception();
         }
 
         return $this->pageData[$this->page - 1];
     }
 
     /**
-     * 現在のページの最初の件数を取得
+     * 現在のページの最初のIndex値を取得
+     *
+     * @return int 現在のページの最初のIndex
      */
     public function getCurrentPageStartIndex()
     {
@@ -112,7 +130,9 @@ class Pager {
     }
 
     /**
-     * 現在のページの最後の件数を取得
+     * 現在のページの最後のIndexを取得
+     *
+     * @return int 現在のページの最後のIndex
      */
     public function getCurrentPageEndIndex()
     {
@@ -123,6 +143,7 @@ class Pager {
     /**
      * データの数を取得
      *
+     * @return int データの数
      */
     public function getDataCount()
     {
@@ -132,29 +153,43 @@ class Pager {
     /**
      * ページの数を取得
      *
+     * @return ページの数
      */
     public function getTotalPageCount()
     {
         return $this->totalPage;
     }
 
+    /**
+     * 次のページが存在するか
+     *
+     * @return boolean true  - 存在する
+     *                 false - 存在しない
+     */
+    public function isNextPageExist()
+    {
+        if (!is_null($this->page) && $this->page < $this->totalPage) {
+            return true;
+        }
 
-//     /**
-//      * ページングコントロール情報を連想配列で返す
-//      */
-//     function getControlInfo()
-//     {
-//         return array(
-//             'page'          => $this->page,
-//             'count'         => $this->allCount,
-//             'prevPage'      => $this->prevPage,
-//             'nextPage'      => $this->nextPage,
-//             'startNumber'   => $this->getStartNumber(),
-//             'endNumber'     => $this->getEndNumber(),
-//             'totalPage'     => $this->totalPage
-//         );
-//     }
+        return false;
+    }
 
+    /**
+     * 前のページが存在するか
+     *
+     * @return boolean true  - 存在する
+     *                 false - 存在しない
+     */
+    public function isPrevPageExist()
+    {
+
+        if (!is_null($this->page) && 1 < $this->page) {
+            return true;
+        }
+
+        return false;
+    }
 
     //=======================================================
     // private function
@@ -170,14 +205,6 @@ class Pager {
         }
 
         $this->totalPage = count($this->pageData);
-
-        if ($this->page < $this->totalPage) {
-            $this->nextPage = $this->page + 1;
-        }
-
-        if ($this->page > 1) {
-            $this->prevPage = $this->page - 1;
-        }
     }
 }
 

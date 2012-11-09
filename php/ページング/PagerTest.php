@@ -19,7 +19,6 @@ class PagerTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-//         $this->object = new Pager;
     }
 
     /**
@@ -31,19 +30,22 @@ class PagerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testGetCurrentPageNumber().
+     *
      */
     public function testGetCurrentPageNumber()
     {
+        // [@を利用している理由]
+        // phpunitはWARNINGを補足するとfailとなってしまう。
+        // failとなりテストが中断しないように@でWARNINGを補足しないようにする。
+
         //-------------------------
         // 正常系
         //-------------------------
         // デフォルト値のチェック
-        $pager = new Pager(array());
+        @$pager = new Pager(array());
         $this->assertNull($pager->getCurrentPageNumber());
 
-        $pager = new Pager(array("",""));
-        $pager->setPerPage(1);
+        $pager = new Pager(array("",""), 1);
         @$pager->setCurrentPageNumber(1);
         $this->assertEquals(1, $pager->getCurrentPageNumber());
         $pager->setCurrentPageNumber(2);
@@ -53,9 +55,7 @@ class PagerTest extends PHPUnit_Framework_TestCase
         // 異常系
         //-------------------------
         // 有効範囲外のページ番号を登録。setした値が無視されるか。
-        // ※WARNINGが発生してテストがfailにならないように@でWARNINGを補足しないようにする。
-        $pager = new Pager(array("",""));
-        $pager->setPerPage(1);
+        $pager = new Pager(array("",""), 1);
         @$pager->setCurrentPageNumber(2); // 正常値を設定
         @$pager->setCurrentPageNumber(3); // 異常値を設定
         $this->assertEquals(2, $pager->getCurrentPageNumber());
@@ -65,80 +65,149 @@ class PagerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo Implement testGetNextPageNumber().
+     *
      */
     public function testGetNextPageNumber()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array("",""));
+        $this->assertEquals(1, $pager->getNextPageNumber());
+
+        $pager = new Pager(array("",""), 1);
+        $this->assertEquals(2, $pager->getNextPageNumber());
+
+        $pager = new Pager(array("",""), 1);
+        $pager->setCurrentPageNumber(2);
+        $this->assertEquals(2, $pager->getNextPageNumber());
     }
 
     /**
-     * @todo Implement testGetPrevPageNumber().
+     *
      */
     public function testGetPrevPageNumber()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array("",""));
+        $this->assertEquals(1, $pager->getPrevPageNumber());
+
+        $pager = new Pager(array("",""), 1);
+        $pager->setCurrentPageNumber(2);
+        $this->assertEquals(1, $pager->getPrevPageNumber());
     }
 
     /**
-     * @todo Implement testGetCurrentPageData().
+     *
      */
     public function testGetCurrentPageData()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array(1,2));
+        $this->assertEquals(array(1,2), $pager->getCurrentPageData());
+
+        $pager = new Pager(array(1,2,3,4,5,6,7,8,9,10,11));
+        $this->assertEquals(array(1,2,3,4,5,6,7,8,9,10), $pager->getCurrentPageData());
+        $pager->setCurrentPageNumber(2);
+        $this->assertEquals(array(11), $pager->getCurrentPageData());
+
+        $pager = new Pager(array(1,2,3,4,5,6,7,8,9,10), 1);
+        $pager->setCurrentPageNumber(1);
+        $this->assertEquals(array(1), $pager->getCurrentPageData());
+        $pager->setCurrentPageNumber(5);
+        $this->assertEquals(array(5), $pager->getCurrentPageData());
+        $pager->setCurrentPageNumber(10);
+        $this->assertEquals(array(10), $pager->getCurrentPageData());
     }
 
     /**
-     * @todo Implement testGetCurrentPageStartIndex().
+     *
      */
     public function testGetCurrentPageStartIndex()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array(""));
+        $index = $pager->getCurrentPageStartIndex();
+        $this->assertEquals(1, $index);
+
+        $pager = new Pager(array("","",""), 2);
+        $pager->setCurrentPageNumber(2);
+        $index = $pager->getCurrentPageStartIndex();
+        $this->assertEquals(3, $index);
     }
 
     /**
-     * @todo Implement testGetCurrentPageEndIndex().
+     *
      */
     public function testGetCurrentPageEndIndex()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array(""));
+        $index = $pager->getCurrentPageEndIndex();
+        $this->assertEquals(1, $index);
+
+        $pager = new Pager(array("","",""), 2);
+        $pager->setCurrentPageNumber(2);
+        $index = $pager->getCurrentPageEndIndex();
+        $this->assertEquals(3, $index);
     }
 
     /**
-     * @todo Implement testGetDataCount().
+     *
      */
     public function testGetDataCount()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array(""));
+        $this->assertEquals(1, $pager->getDataCount());
+
+        $pager = new Pager(array("", ""));
+        $this->assertEquals(2, $pager->getDataCount());
     }
 
     /**
-     * @todo Implement testGetPageCount().
+     *
      */
-    public function testGetPageCount()
+    public function testGetTotalPageCount()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $pager = new Pager(array(""));
+        $this->assertEquals(1, $pager->getTotalPageCount());
+
+        $pager = new Pager(array("",""));
+        $this->assertEquals(1, $pager->getTotalPageCount());
+
+        $pager = new Pager(array("",""), 1);
+        $this->assertEquals(2, $pager->getTotalPageCount());
+    }
+
+    /**
+     *
+     */
+    public function testIsNextPageExist()
+    {
+        $pager = new Pager(array(""));
+        $this->assertEquals(false, $pager->isNextPageExist());
+
+        $pager = new Pager(array(""), 1);
+        $this->assertEquals(false, $pager->isNextPageExist());
+
+        $pager = new Pager(array("", ""), 1);
+        $this->assertEquals(true, $pager->isNextPageExist());
+
+        $pager = new Pager(array("", ""), 1);
+        $pager->setCurrentPageNumber(2);
+        $this->assertEquals(false, $pager->isNextPageExist());
+    }
+
+    /**
+     *
+     */
+    public function testIsPrevPageExist()
+    {
+        $pager = new Pager(array(""));
+        $this->assertEquals(false, $pager->isPrevPageExist());
+
+        $pager = new Pager(array(""), 1);
+        $this->assertEquals(false, $pager->isPrevPageExist());
+
+        $pager = new Pager(array("", ""), 1);
+        $this->assertEquals(false, $pager->isPrevPageExist());
+
+        $pager = new Pager(array("", ""), 1);
+        $pager->setCurrentPageNumber(2);
+        $this->assertEquals(true, $pager->isPrevPageExist());
     }
 }
 ?>
