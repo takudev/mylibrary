@@ -137,6 +137,53 @@ class UtilTest extends PHPUnit_Framework_TestCase
         Util::getRandomStringStrong8("a");
     }
 
+	public function testConvertCsvStringToArray(){
+	
+		$temp_file = $this->createCSV();
+		
+		// 実行
+		$result_array = Util::convertCsvStringToArray($temp_file);
+		
+		// 取得した要素数の確認
+		$this->assertEquals(count($result_array), 3);
+		foreach($result_array as $result_row){
+			$this->assertEquals(count($result_row), 2);
+			
+		}
+		
+		// 取得した内容の確認
+		$this->assertEquals($result_array[0][0], "あ");
+		$this->assertEquals($result_array[0][1], "い");
+		$this->assertEquals($result_array[1][0], "う");
+		$this->assertEquals($result_array[1][1], "噂");
+		$this->assertEquals($result_array[2][0], "え");
+		$this->assertEquals($result_array[2][1], "お");
+		
+	}
+	
+	
+	
+    //==========================================
+    // support function
+    //==========================================
+    function createCSV(){
+		// 検証CSV作成
+		$temp_file = sys_get_temp_dir() . "/" . __FUNCTION__;
+		$test_str = <<< EOD
+"あ","い"
+"う","噂"
+"え","お"
+EOD;
+		$test_str_sjis = mb_convert_encoding($test_str, 'sjis-win', 'utf8');
+		$handle = fopen($temp_file, 'w');
+		fwrite($handle, $test_str_sjis);
+		fclose($handle);
+		
+		return $temp_file;
+    }
+    
+    
+    
     //==========================================
     // dataProvider
     //==========================================

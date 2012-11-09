@@ -109,5 +109,43 @@ class Util{
         }
         return $random_string;
     }
+    
+    
+    /**
+     * パスで指定されたCSVファイルを配列に変換して返します
+     * CSVファイルをメモリに展開し、文字コード変換後、デリミタ（デフォルト：カンマ）で分割し、配列に格納し返却します。
+     * 
+     * ※fgetcsv 5C問題対策に作成したfunctionです。
+     * 
+     * @param string $file_path ファイルパス
+     * @param array  $options   オプション配列
+     *
+     * @return array $values CSVデータ配列
+     *
+     */
+    public static function convertCsvStringToArray($file_path, $options = array())
+    {
+
+        $to_encoding   = isset($options['to_encoding']) ? $options['to_encoding'] : 'utf-8';
+        $from_encoding = isset($options['from_encoding']) ? $options['from_encoding'] : 'sjis-win';
+        $delimiter     = isset($options['delimiter']) ? $options['delimiter'] : ',';
+        $locale        = isset($options['local']) ? $options['local'] : 'ja_JP.UTF-8';
+
+        $csv_string = file_get_contents($file_path);
+        $csv_string = mb_convert_encoding($csv_string, $to_encoding, $from_encoding);
+
+        $fp = fopen('php://memory', 'r+');
+        fwrite($fp, $csv_string);
+        rewind($fp);
+        $current_locale = setlocale(LC_ALL, '0');
+        setlocale(LC_ALL, $locale);
+        $values = array();
+        while ($value = fgetcsv($fp, 10240, $delimiter)) {
+            $values[] = $value;
+        }
+        setlocale(LC_ALL, $current_locale);
+        fclose($fp);
+        return $values;
+    }
 }
 ?>
